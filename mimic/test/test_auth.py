@@ -625,6 +625,41 @@ class GetEndpointsForTokenTests(SynchronousTestCase):
             }
         })
 
+    def test_rax_kskey_apikeycredentials(self):
+        """
+        Test apiKeyCredentials
+        """
+        core = MimicCore(Clock(), [ExampleAPI()])
+        root = MimicRoot(core).app.resource()
+        (response, json_body) = self.successResultOf(json_request(
+            self, root, "GET",
+            "/identity/v2.0/users/1/OS-KSADM/credentials/RAX-KSKEY:apiKeyCredentials"
+        ))
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json_body['RAX-KSKEY:apiKeyCredentials']['username'],
+                         'mimic_userid_1')
+        creds = {
+            "auth": {
+                "passwordCredentials": {
+                    "username": "HedKandi",
+                    "password": "Ministry Of Sound UK"
+                },
+                "tenantId": "77777"
+            }
+        }
+        (response, json_body) = self.successResultOf(json_request(
+            self, root, "POST", "/identity/v2.0/tokens", creds))
+        self.assertEqual(response.code, 200)
+        user_id = json_body['access']['user']['id']
+        username = json_body['access']['user']['name']
+        (response, json_body) = self.successResultOf(json_request(
+            self, root, "GET",
+            "/identity/v2.0/users/"+user_id+"/OS-KSADM/credentials/RAX-KSKEY:apiKeyCredentials"
+        ))
+        self.assertEqual(response.code, 200)
+        self.assertEqual(json_body['RAX-KSKEY:apiKeyCredentials']['username'],
+                         username)
+
     def test_token_and_catalog_for_api_credentials_wrong_tenant(self):
         """
         Tenant ID is validated when provided in api-key auth.
