@@ -635,9 +635,8 @@ class GetEndpointsForTokenTests(SynchronousTestCase):
             self, root, "GET",
             "/identity/v2.0/users/1/OS-KSADM/credentials/RAX-KSKEY:apiKeyCredentials"
         ))
-        self.assertEqual(response.code, 200)
-        self.assertEqual(json_body['RAX-KSKEY:apiKeyCredentials']['username'],
-                         'mimic_userid_1')
+        self.assertEqual(response.code, 404)
+        self.assertEqual(json_body['itemNotFound']['message'], 'User 1 not found')
         creds = {
             "auth": {
                 "passwordCredentials": {

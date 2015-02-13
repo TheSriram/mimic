@@ -130,12 +130,16 @@ class AuthApi(object):
         """
         Support, such as it is, for the apiKeysCredentials call.
         """
-        username = "mimic_userid_"+user_id
+        username = None
         if user_id in self.core.sessions._userid_to_session:
             username = self.core.sessions._userid_to_session[user_id].username.decode('ascii')
-        apikey = '7fc56270e7a70fa81a5935b72eacbe29'  # echo -n A | md5sum
-        return json.dumps({'RAX-KSKEY:apiKeyCredentials': {'username': username,
-                           'apiKey': apikey}})
+            apikey = '7fc56270e7a70fa81a5935b72eacbe29'  # echo -n A | md5sum
+            return json.dumps({'RAX-KSKEY:apiKeyCredentials': {'username': username,
+                               'apiKey': apikey}})
+        else:
+            request.setResponseCode(404)
+            return json.dumps({'itemNotFound':
+                              {'code': 404, 'message': 'User '+user_id+' not found'}})
 
     @app.route('/v2.0/RAX-AUTH/impersonation-tokens', methods=['POST'])
     def get_impersonation_token(self, request):
