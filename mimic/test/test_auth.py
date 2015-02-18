@@ -653,7 +653,7 @@ class GetEndpointsForTokenTests(SynchronousTestCase):
         username = json_body['access']['user']['name']
         (response, json_body) = self.successResultOf(json_request(
             self, root, "GET",
-            "/identity/v2.0/users/"+user_id+"/OS-KSADM/credentials/RAX-KSKEY:apiKeyCredentials"
+            "/identity/v2.0/users/" + user_id + "/OS-KSADM/credentials/RAX-KSKEY:apiKeyCredentials"
         ))
         self.assertEqual(response.code, 200)
         self.assertEqual(json_body['RAX-KSKEY:apiKeyCredentials']['username'],
